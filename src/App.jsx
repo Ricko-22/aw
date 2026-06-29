@@ -35,7 +35,7 @@ function App() {
 
   useEffect(() => {
     const img = new Image();
-    img.src = '/src/assets/bg1.png';
+    img.src = '/assets/bg1.png';
     img.onload = () => setImgLoaded(true);
   }, []);
 
@@ -227,7 +227,7 @@ function App() {
         </div>
       </nav>
 
-      <header id="home" className={`hero ${imgLoaded ? 'hero-loaded' : 'hero-loading'}`} style={imgLoaded ? { backgroundImage: `url(/src/assets/bg1.png)` } : {}}>
+      <header id="home" className={`hero ${imgLoaded ? 'hero-loaded' : 'hero-loading'}`}style={imgLoaded ? { backgroundImage: `url(/assets/bg1.png)` } : {}}>
         <div className="hero-overlay"></div>
         <div className="hero-content">
           <p className="hero-tagline">#1 Trusted Laundry in Purwokerto</p>
