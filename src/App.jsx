@@ -1,6 +1,8 @@
 import { useState, useEffect, lazy, Suspense } from 'react';
 import './App.css';
 
+const API = import.meta.env.VITE_API_URL || "http://localhost:5000";
+
 // eslint-disable-next-line no-unused-vars
 const ModalPesanan = lazy(() => import('./ModalPesanan'));
 
@@ -62,7 +64,7 @@ function App() {
     if (!trackingInput) { setTrackingError("Masukkan kode invoice terlebih dahulu"); return; }
     try {
       setTrackingLoading(true); resetTracking();
-      const res = await fetch(`http://localhost:5000/tracking/nota/${trackingInput}`);
+      const res = await fetch(`${API}/tracking/nota/${trackingInput}`);
       const data = await res.json();
       if (data.success) setTrackingResult(data.data);
       else setTrackingError("Data tidak ditemukan untuk kode invoice ini");
@@ -75,7 +77,7 @@ function App() {
     if (!trackingInput) { setTrackingError("Masukkan nomor HP terlebih dahulu"); return; }
     try {
       setTrackingLoading(true); resetTracking();
-      const res = await fetch(`http://localhost:5000/tracking/hp/${trackingInput}`);
+      const res = await fetch(`${API}/tracking/hp/${trackingInput}`);
       const data = await res.json();
       if (data.success) setTrackingResults(data.data);
       else setTrackingError("Data tidak ditemukan untuk nomor HP ini");
@@ -88,7 +90,7 @@ function App() {
     if (!trackingInput) { setTrackingError("Masukkan ID transaksi terlebih dahulu"); return; }
     try {
       setTrackingLoading(true); resetTracking();
-      const res = await fetch(`http://localhost:5000/tracking/id/${trackingInput}`);
+      const res = await fetch(`${API}/tracking/id/${trackingInput}`);
       const data = await res.json();
       if (data.success) setTrackingResult(data.data);
       else setTrackingError("Data tidak ditemukan untuk ID transaksi ini");
@@ -142,7 +144,7 @@ function App() {
     if (!nama || !hp || !alamat || !layanan) { alert("Lengkapi semua data terlebih dahulu"); return; }
     const noNota = generateNota();
     try {
-      const res = await fetch("http://localhost:5000/pesanan", {
+     const res = await fetch(`${API}/pesanan`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ nota: noNota, nama, hp, alamat, layanan, status: "Menunggu Penjemputan", tanggal: new Date() })
