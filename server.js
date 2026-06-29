@@ -6,10 +6,13 @@ import pg from "pg";
 
 const { Pool } = pg;
 const app = express();
-const PORT = 5000;
+// const PORT = process.env.PORT || 5000;
 
-const JWT_SECRET = "aw-laundry-secret-key-2024";
-const ADMIN_USER = { username: "admin", password: "admin123" };
+const JWT_SECRET = process.env.JWT_SECRET;
+const ADMIN_USER = {
+  username: process.env.ADMIN_USERNAME,
+  password: process.env.ADMIN_PASSWORD
+};
 
 app.use(cors());
 app.use(express.json());
@@ -19,7 +22,22 @@ if (!process.env.DATABASE_URL) {
   process.exit(1);
 }
 
-const pool = new Pool({ connectionString: process.env.DATABASE_URL });
+if (!process.env.JWT_SECRET) {
+  console.error("❌ JWT_SECRET tidak ditemukan di file .env");
+  process.exit(1);
+}
+
+if (!process.env.ADMIN_USERNAME || !process.env.ADMIN_PASSWORD) {
+  console.error("❌ ADMIN_USERNAME atau ADMIN_PASSWORD tidak ditemukan di file .env");
+  process.exit(1);
+}
+
+const pool = new Pool({ 
+  connectionString: process.env.DATABASE_URL,
+  ssl: process.env.NODE_ENV === "production" 
+    ? { rejectUnauthorized: false } 
+    : false
+});
 pool.on("error", (err) => console.error("❌ PostgreSQL Error:", err));
 
 app.get("/", (req, res) => res.json({ success: true, message: "AW Laundry API berjalan" }));
@@ -47,12 +65,32 @@ const initDB = async () => {
 initDB();
 
 const verifyToken = (req, res, next) => {
+  console.log("=== VERIFY TOKEN ===");
+
   const authHeader = req.headers.authorization;
-  if (!authHeader) return res.status(401).json({ success: false, message: "Token tidak ditemukan" });
+  console.log("Authorization:", authHeader);
+
+  if (!authHeader) {
+    return res.status(401).json({
+      success: false,
+      message: "Token tidak ditemukan",
+    });
+  }
+
   const token = authHeader.split(" ")[1];
-  if (!token) return res.status(401).json({ success: false, message: "Token tidak valid" });
+  console.log("Token:", token);
+
   jwt.verify(token, JWT_SECRET, (err, user) => {
-    if (err) return res.status(403).json({ success: false, message: "Token tidak valid atau kedaluwarsa" });
+    console.log("Verify Error:", err);
+    console.log("User:", user);
+
+    if (err) {
+      return res.status(403).json({
+        success: false,
+        message: "Token tidak valid",
+      });
+    }
+
     req.user = user;
     next();
   });
@@ -85,15 +123,29 @@ app.post("/pesanan", async (req, res) => {
 
 /* ========================= AMBIL SEMUA PESANAN (admin) ========================= */
 app.get("/pesanan", verifyToken, async (req, res) => {
+  console.log("=== GET /pesanan dipanggil ===");
+
   try {
-    const result = await pool.query("SELECT * FROM pesanan ORDER BY tanggal DESC");
-    res.json({ success: true, data: result.rows });
+    const result = await pool.query(
+      "SELECT * FROM pesanan ORDER BY tanggal DESC"
+    );
+
+    console.log("Jumlah data:", result.rows.length);
+
+    res.json({
+      success: true,
+      data: result.rows,
+    });
+
   } catch (err) {
     console.error("❌ ERROR GET /pesanan", err);
-    res.status(500).json({ success: false, message: err.message });
+
+    res.status(500).json({
+      success: false,
+      message: err.message,
+    });
   }
 });
-
 /* ========================= TRACKING BY HP ========================= */
 app.get("/tracking/hp/:hp", async (req, res) => {
   try {
@@ -175,6 +227,9 @@ app.delete("/pesanan/:nota", verifyToken, async (req, res) => {
 });
 
 /* ========================= SERVER ========================= */
+/* ========================= SERVER ========================= */
+const PORT = process.env.PORT || 5000;
+
 app.listen(PORT, () => {
   console.log(`\n🚀 Server jalan di http://localhost:${PORT}\n`);
   console.log("POST   /login");
@@ -185,5 +240,7 @@ app.listen(PORT, () => {
   console.log("GET    /tracking/nota/:kode");
   console.log("PUT    /pesanan/:nota        (JWT)");
   console.log("DELETE /pesanan/:nota        (JWT)");
-  console.log("");
 });
+
+export default app;
+
