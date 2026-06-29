@@ -207,7 +207,7 @@ function App() {
       <nav className={`navbar ${isScrolled ? 'scrolled' : ''}`}>
         <div className="navbar-content">
           <div className="logo-container" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} style={{ cursor: 'pointer' }}>
-            <img src="/src/assets/logo-aw.png" alt="AW" className="app-logo" loading="lazy" decoding="async" />
+            <img src="/assets/logo-aw.png" alt="AW" className="app-logo" loading="lazy" decoding="async" />
             <div className="logo-wrapper">
               <span className="logo-text">AW LAUNDRY</span>
               <span className="logo-subtext"></span>
@@ -416,7 +416,7 @@ function App() {
         <div className="footer-content">
           <div className="footer-brand">
             <div className="logo-container">
-              <img src="/src/assets/logo-aw.png" alt="AW" className="app-logo" loading="lazy" decoding="async" />
+              <img src="/assets/logo-aw.png" alt="AW" className="app-logo" loading="lazy" decoding="async" />
               <div className="logo-wrapper"><span className="logo-text">AW LAUNDRY</span><span className="logo-subtext">Premium Service</span></div>
             </div>
             <p className="footer-desc">Solusi laundry modern dan terpercaya di Dukuhwaluh. Kami menjaga kebersihan pakaian Anda seperti milik sendiri.</p>
