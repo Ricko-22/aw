@@ -238,3 +238,27 @@ code {
     flex-direction: column;
   }
 }
+
+.install-float {
+  position: fixed;
+  bottom: 90px; /* tepat di atas tombol WA */
+  right: 18px;
+  width: 55px;
+  height: 55px;
+  border-radius: 50%;
+  background: #6366f1;
+  color: white;
+  border: none;
+  font-size: 22px;
+  cursor: pointer;
+  z-index: 9999;
+  box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s ease;
+}
+
+.install-float:hover {
+  transform: scale(1.1);
+}

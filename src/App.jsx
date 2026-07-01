@@ -26,6 +26,8 @@ function App() {
   const [showForm, setShowForm] = useState(false);
   const [nota, setNota] = useState("");
   const [imgLoaded, setImgLoaded] = useState(false);
+  const [deferredPrompt, setDeferredPrompt] = useState(null);
+  const [showInstall, setShowInstall] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 50);
@@ -38,6 +40,25 @@ function App() {
     img.src = '/assets/bg1.png';
     img.onload = () => setImgLoaded(true);
   }, []);
+
+  useEffect(() => {
+  window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    setDeferredPrompt(e);
+    setShowInstall(true);
+  });
+  window.addEventListener('appinstalled', () => {
+    setShowInstall(false);
+  });
+}, []);
+
+const handleInstall = async () => {
+  if (!deferredPrompt) return;
+  deferredPrompt.prompt();
+  const { outcome } = await deferredPrompt.userChoice;
+  if (outcome === 'accepted') setShowInstall(false);
+  setDeferredPrompt(null);
+};
 
   useEffect(() => {
     const handleClickOutside = (e) => {
@@ -200,6 +221,13 @@ function App() {
 
   return (
     <div className="app">
+
+    {showInstall && (
+  <button onClick={handleInstall} className="install-float">
+    📲
+  </button>
+)}
+
       <a href="https://wa.me/6287892008122" className="wa-float" target="_blank" rel="noopener noreferrer">
         <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" width="30" alt="WA" loading="lazy" />
       </a>
