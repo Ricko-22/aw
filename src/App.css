@@ -1039,6 +1039,30 @@ body {
   transition: 0.3s;
 }
 
+.install-float {
+  position: fixed;
+  bottom: 35px;        /* samakan dengan wa-float */
+  right: 115px;        /* 35px + 65px (lebar wa) + 15px jarak */
+  width: 65px;         /* samakan ukuran dengan wa-float */
+  height: 65px;
+  border-radius: 50%;
+  background: #6366f1;
+  color: white;
+  border: none;
+  font-size: 22px;
+  cursor: pointer;
+  z-index: 2000;       /* samakan z-index dengan wa-float */
+  box-shadow: 0 10px 30px rgba(99, 102, 241, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: 0.3s;
+}
+
+.install-float:hover {
+  transform: scale(1.15);
+}
+
 .wa-float:hover { transform: scale(1.15) rotate(10deg); }
 
 /* --- RESPONSIVE MOBILE --- */
